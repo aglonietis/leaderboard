@@ -1,0 +1,6 @@
+run:
+	air
+
+#test:
+
+# build:
