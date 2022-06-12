@@ -15,6 +15,6 @@ func NewHomeController() HomeController {
 	return &homeController{}
 }
 
-func (*homeController) Index(ctx echo.Context) error {
+func (c *homeController) Index(ctx echo.Context) error {
 	return ctx.String(http.StatusOK, "Hello, World!")
 }

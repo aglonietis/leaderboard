@@ -1,0 +1,37 @@
+
+version: "3.8"
+
+services:
+  redis:
+    image: redis:6-alpine
+    container_name: api_redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - web_api
+
+  postgresql:
+    image: postgres:12-alpine
+    container_name: api_postgresql
+    ports:
+      - "${DB_PORT}:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - web_api
+
+volumes:
+  postgresql_data:
+  redis_data:
+
+networks:
+  web_api:
+    driver: bridge

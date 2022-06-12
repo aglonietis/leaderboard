@@ -2,21 +2,32 @@ package main
 
 import (
 	"github.com/spf13/viper"
-	"leaderboard/controllers"
+	"leaderboard/internal/controllers"
+	"leaderboard/internal/database"
+	"leaderboard/internal/handler"
 
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	e := echo.New()
+	e.Validator = handler.NewValidator()
 
 	configFileName := ".env"
 
+	// Load Viper
 	viper.SetConfigFile(configFileName)
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		e.Logger.Fatal("Unable to load configuration file " + configFileName)
+		e.Logger.Fatal("Unable to load configuration file " + configFileName + ":" + err.Error())
+	}
+
+	// Load database
+	err = database.Init()
+
+	if err != nil {
+		e.Logger.Fatal("Unable to establish database connection: " + err.Error())
 	}
 
 	// Controllers
@@ -31,8 +42,8 @@ func main() {
 
 	// API routes
 	apiGroup.GET("", homeController.Index)
-	scoreGroup.GET("", scoreController.Test)
-	leaderboardGroup.GET("", leaderboardController.Test)
+	scoreGroup.POST("", scoreController.Store)
+	leaderboardGroup.GET("", leaderboardController.Index)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
