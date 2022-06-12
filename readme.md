@@ -30,3 +30,10 @@ cp .env.example .env
 ```
 make start
 ```
+
+# Interesting things
+
+### Possibilities to improve leaderboard rank check time
+
+Relational database provides N*log2(N) speed, while Article: https://www.hindawi.com/journals/ijcgt/2018/3234873/
+provides info that it is possible to reduce it to log2(N)
