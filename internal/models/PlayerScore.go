@@ -9,7 +9,7 @@ import (
 type PlayerScore struct {
 	gorm.Model `json:"-"`
 	SubmitedAt time.Time `json:"-"`
-	Name string `json:"name"`
-	Score int `json:"score"`
-	Rank int `json:"rank" gorm:"-"`
+	Name       string    `json:"name"`
+	Score      int       `json:"score"`
+	Rank       int       `json:"rank" gorm:"-"`
 }
