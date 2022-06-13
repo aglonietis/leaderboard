@@ -1,0 +1,11 @@
+package handler
+
+// TODO: T any does not accept struct. Struct acceptance not yet implemented in Go 1.18 Should check in 1.19
+func ContainsParam[T any,V comparable](elems []T, f func(elem T) V, v V) bool {
+	for _, elem := range elems {
+		if v == f(elem) {
+			return true
+		}
+	}
+	return false
+}

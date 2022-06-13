@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/spf13/viper"
 	"leaderboard/internal/database"
 	"leaderboard/internal/models"
 )
@@ -9,35 +8,35 @@ import (
 type leaderboardRepository struct {}
 
 type LeaderboardRepository interface {
-	Index(page int) ([]models.PlayerScore, error)
+	Index(page int) ([]models.PlayerScore, database.Pagination, error)
+	GetAroundPlayer(playerName string) ([]models.PlayerScore, error)
 }
 
 func NewLeaderboardRepository() LeaderboardRepository {
 	return &leaderboardRepository{}
 }
 
-func (r *leaderboardRepository) Index(page int) ([]models.PlayerScore, error) {
-	db := database.DbManager()
+func (r *leaderboardRepository) Index(page int) ([]models.PlayerScore,database.Pagination, error) {
 	var scores []models.PlayerScore
 
-	pageSize := viper.GetInt("LEADERBOARD_PAGE_SIZE")
-	pageOffset := (page - 1) * pageSize
+	db := database.DbManager()
 
-	err := db.Order("score desc").
-		Offset(pageOffset).
-		Limit(pageSize).
-		Find(&scores).Error
+	baseQuery := db.Order("score desc")
+
+	pagination, err := database.Paginate(baseQuery,&scores, page)
 
 	if err != nil {
-		return scores, err
+		return scores, pagination, err
 	}
 
-	return r.FilLRanks(scores, pageOffset), nil
+	return scores, pagination, nil
 }
 
-// TODO: Maybe move Ranking to database levelor cache
+
+// TODO: Fix implementation. Does not work with AroundMe positioning
+// TODO: Maybe move Ranking to database level or cache. Possibly NOT needed if can use PostgreSQL Index ranks
 func (r *leaderboardRepository) FilLRanks(scores []models.PlayerScore, pageOffset int) []models.PlayerScore {
-	var rank int = pageOffset + 1
+	rank := pageOffset + 1
 
 	for index, score := range scores {
 		score.Rank = rank
@@ -46,4 +45,13 @@ func (r *leaderboardRepository) FilLRanks(scores []models.PlayerScore, pageOffse
 	}
 
 	return scores
+}
+
+func (r *leaderboardRepository) GetAroundPlayer(playerName string) ([]models.PlayerScore, error) {
+	var scores []models.PlayerScore
+
+	// TODO: Implement AroundMe
+	//db := database.DbManager()
+
+	return scores, nil
 }
