@@ -24,8 +24,8 @@ func Init() error {
 }
 
 func GetDatabaseUrl() string {
-	return 	"postgres://"+viper.GetString("DB_USER")+":"+viper.GetString("DB_PASSWORD") +
-		"@"+viper.GetString("DB_HOST")+":"+viper.GetString("DB_PORT")+"/"+viper.GetString("DB_DATABASE")
+	return "postgres://" + viper.GetString("DB_USER") + ":" + viper.GetString("DB_PASSWORD") +
+		"@" + viper.GetString("DB_HOST") + ":" + viper.GetString("DB_PORT") + "/" + viper.GetString("DB_DATABASE")
 }
 
 func DbManager() *gorm.DB {

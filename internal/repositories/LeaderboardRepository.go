@@ -5,7 +5,7 @@ import (
 	"leaderboard/internal/models"
 )
 
-type leaderboardRepository struct {}
+type leaderboardRepository struct{}
 
 type LeaderboardRepository interface {
 	Index(page int) ([]models.PlayerScore, database.Pagination, error)
@@ -16,14 +16,14 @@ func NewLeaderboardRepository() LeaderboardRepository {
 	return &leaderboardRepository{}
 }
 
-func (r *leaderboardRepository) Index(page int) ([]models.PlayerScore,database.Pagination, error) {
+func (r *leaderboardRepository) Index(page int) ([]models.PlayerScore, database.Pagination, error) {
 	var scores []models.PlayerScore
 
 	db := database.DbManager()
 
 	baseQuery := db.Order("score desc")
 
-	pagination, err := database.Paginate(baseQuery,&scores, page)
+	pagination, err := database.Paginate(baseQuery, &scores, page)
 
 	if err != nil {
 		return scores, pagination, err
@@ -31,7 +31,6 @@ func (r *leaderboardRepository) Index(page int) ([]models.PlayerScore,database.P
 
 	return scores, pagination, nil
 }
-
 
 // TODO: Fix implementation. Does not work with AroundMe positioning
 // TODO: Maybe move Ranking to database level or cache. Possibly NOT needed if can use PostgreSQL Index ranks

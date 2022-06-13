@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type homeController struct {}
+type homeController struct{}
 
 type HomeController interface {
 	Index(ctx echo.Context) error

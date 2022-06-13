@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type scoreRepository struct {}
+type scoreRepository struct{}
 
 type ScoreRepository interface {
 	FindByName(name string) (models.PlayerScore, error)
@@ -28,8 +28,8 @@ func (r *scoreRepository) Save(s models.PlayerScore) (models.PlayerScore, error)
 
 func (r *scoreRepository) Create(name string) models.PlayerScore {
 	return models.PlayerScore{
-		Name: name,
-		Score: 0,
+		Name:       name,
+		Score:      0,
 		SubmitedAt: time.Now(),
 	}
 }

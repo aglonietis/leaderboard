@@ -25,9 +25,9 @@ func NewLeaderboardController() LeaderboardController {
 
 func (c *leaderboardController) Index(ctx echo.Context) error {
 
-	page := handler.QueryParamInt(ctx,"page",1)
+	page := handler.QueryParamInt(ctx, "page", 1)
 
-	scores, pagination,err :=  c.leaderboardRepository.Index(page)
+	scores, pagination, err := c.leaderboardRepository.Index(page)
 
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to retrieve Player Score List")
@@ -48,10 +48,10 @@ func (c *leaderboardController) Index(ctx echo.Context) error {
 	resource := resources.LeaderboardResource{
 		Pagination: pagination,
 		Results:    scores,
-		AroundMe: aroundMe,
+		AroundMe:   aroundMe,
 	}
 
-	return ctx.JSON(http.StatusOK,resource)
+	return ctx.JSON(http.StatusOK, resource)
 }
 
 // TODO: Manual implementation until "leaderboard/internal/handler" ContainsParam is fixed.

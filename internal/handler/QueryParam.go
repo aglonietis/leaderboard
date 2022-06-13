@@ -5,7 +5,6 @@ import (
 	"strconv"
 )
 
-
 func QueryParamInt(ctx echo.Context, name string, defaultValue int) int {
 	page, err := strconv.Atoi(ctx.QueryParam(name))
 

@@ -19,7 +19,7 @@ func NewValidator() *CustomValidator {
 	return &CustomValidator{Validator: validator.New()}
 }
 
-func BindValidate(ctx echo.Context,i interface{}) error {
+func BindValidate(ctx echo.Context, i interface{}) error {
 	if err := ctx.Bind(i); err != nil {
 		return err
 	}

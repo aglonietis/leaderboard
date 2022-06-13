@@ -49,5 +49,5 @@ func (c *scoreController) Store(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to update Player Score")
 	}
 
-	return ctx.JSON(http.StatusOK,s)
+	return ctx.JSON(http.StatusOK, s)
 }
