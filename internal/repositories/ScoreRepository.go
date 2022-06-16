@@ -30,7 +30,7 @@ func (r *scoreRepository) Create(name string) models.PlayerScore {
 	return models.PlayerScore{
 		Name:       name,
 		Score:      0,
-		SubmitedAt: time.Now(),
+		SubmittedAt: time.Now(),
 	}
 }
 

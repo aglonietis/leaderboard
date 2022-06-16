@@ -6,11 +6,13 @@ import (
 	"leaderboard/internal/models"
 	"leaderboard/internal/repositories"
 	"leaderboard/internal/resources"
+	"log"
 	"net/http"
 )
 
 type leaderboardController struct {
 	leaderboardRepository repositories.LeaderboardRepository
+	scoreRepository repositories.ScoreRepository
 }
 
 type LeaderboardController interface {
@@ -20,6 +22,7 @@ type LeaderboardController interface {
 func NewLeaderboardController() LeaderboardController {
 	return &leaderboardController{
 		leaderboardRepository: repositories.NewLeaderboardRepository(),
+		scoreRepository: repositories.NewScoreRepository(),
 	}
 }
 
@@ -33,11 +36,12 @@ func (c *leaderboardController) Index(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to retrieve Player Score List")
 	}
 
-	var aroundMe []models.PlayerScore
+	var aroundMe []models.Ranking
 
 	playerName := ctx.QueryParam("name")
 
 	if playerName != "" && false == containsPlayerName(scores, playerName) {
+
 		aroundMe, err = c.leaderboardRepository.GetAroundPlayer(playerName)
 
 		if err != nil {
@@ -55,9 +59,11 @@ func (c *leaderboardController) Index(ctx echo.Context) error {
 }
 
 // TODO: Manual implementation until "leaderboard/internal/handler" ContainsParam is fixed.
-func containsPlayerName(elements []models.PlayerScore, name string) bool {
+func containsPlayerName(elements []models.Ranking, name string) bool {
 	for _, element := range elements {
 		if element.Name == name {
+			log.Println(element.Name, name)
+
 			return true
 		}
 	}

@@ -40,7 +40,7 @@ func (c *scoreController) Store(ctx echo.Context) error {
 
 	if request.Score > s.Score {
 		s.Score = request.Score
-		s.SubmitedAt = time.Now()
+		s.SubmittedAt = time.Now()
 	}
 
 	s, err = c.scoreRepository.Save(s)
