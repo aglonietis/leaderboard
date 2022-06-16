@@ -8,20 +8,23 @@ import (
 type leaderboardRepository struct{}
 
 type LeaderboardRepository interface {
-	Index(page int) ([]models.PlayerScore, database.Pagination, error)
-	GetAroundPlayer(playerName string) ([]models.PlayerScore, error)
+	Index(page int) ([]models.Ranking, database.Pagination, error)
+	GetAroundPlayer(name string) ([]models.Ranking, error)
 }
 
 func NewLeaderboardRepository() LeaderboardRepository {
 	return &leaderboardRepository{}
 }
 
-func (r *leaderboardRepository) Index(page int) ([]models.PlayerScore, database.Pagination, error) {
-	var scores []models.PlayerScore
+func (r *leaderboardRepository) Index(page int) ([]models.Ranking, database.Pagination, error) {
+	var scores []models.Ranking
 
 	db := database.DbManager()
 
-	baseQuery := db.Order("score desc")
+	baseQuery := db.Order("rankings.rank asc").
+		Joins("JOIN rankings on rankings.player_score_id=player_scores.id").
+		Select("rankings.rank","player_scores.name","player_scores.score").
+		Table("player_scores")
 
 	pagination, err := database.Paginate(baseQuery, &scores, page)
 
@@ -32,25 +35,34 @@ func (r *leaderboardRepository) Index(page int) ([]models.PlayerScore, database.
 	return scores, pagination, nil
 }
 
-// TODO: Fix implementation. Does not work with AroundMe positioning
-// TODO: Maybe move Ranking to database level or cache. Possibly NOT needed if can use PostgreSQL Index ranks
-func (r *leaderboardRepository) FilLRanks(scores []models.PlayerScore, pageOffset int) []models.PlayerScore {
-	rank := pageOffset + 1
+func (r *leaderboardRepository) GetAroundPlayer(name string) ([]models.Ranking, error) {
+	var scores []models.Ranking
 
-	for index, score := range scores {
-		score.Rank = rank
-		scores[index] = score
-		rank++
+	db := database.DbManager()
+
+	playerRankingSubqueryMin := db.Select("(player_ranking.rank - 5)").
+		Joins("JOIN rankings as player_ranking on player_ranking.player_score_id=player_scores.id").
+		Where("name = ?", name).
+		Table("player_scores")
+
+	playerRankingSubqueryMax := db.Select("(player_ranking.rank + 5)").
+		Joins("JOIN rankings as player_ranking on player_ranking.player_score_id=player_scores.id").
+		Where("name = ?", name).
+		Table("player_scores")
+
+	err := db.Order("rankings.rank asc").
+		Where("rankings.rank > (?)",playerRankingSubqueryMin).
+		Where("rankings.rank < (?)",playerRankingSubqueryMax).
+		Joins("JOIN player_scores on rankings.player_score_id=player_scores.id").
+		Table("rankings").
+		Select("player_scores.name","player_scores.score","rankings.rank").
+		Find(&scores).Error
+
+	if err != nil {
+		return scores, err
 	}
 
-	return scores
-}
 
-func (r *leaderboardRepository) GetAroundPlayer(playerName string) ([]models.PlayerScore, error) {
-	var scores []models.PlayerScore
-
-	// TODO: Implement AroundMe
-	//db := database.DbManager()
 
 	return scores, nil
 }

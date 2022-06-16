@@ -6,7 +6,7 @@ import (
 )
 
 type LeaderboardResource struct {
-	Results  []models.PlayerScore `json:"results"`
-	AroundMe []models.PlayerScore `json:"around_me,omitempty"`
+	Results  []models.Ranking `json:"results"`
+	AroundMe []models.Ranking `json:"around_me,omitempty"`
 	database.Pagination
 }
