@@ -1,8 +1,5 @@
 package models
 
-import (
-)
-
 type Ranking struct {
 	Name        string    `json:"name" gorm:"migrate"`
 	Score       int       `json:"score" gorm:"migrate"`

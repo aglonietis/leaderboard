@@ -47,7 +47,7 @@ func main() {
 func MigrateModels() error {
 	db := database.DbManager()
 
-	err := db.AutoMigrate(&models.PlayerScore{})
+	err := db.AutoMigrate(&models.PlayerScore{},&models.User{},&models.JwtToken{})
 
 	if err != nil {
 		return err
