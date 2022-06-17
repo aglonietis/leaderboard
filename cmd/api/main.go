@@ -50,7 +50,6 @@ func main() {
 	e.GET("", homeController.Home)
 	publicGroup.POST("login", authController.Login)
 
-
 	scoreGroup := apiGroup.Group("/scores")
 	leaderboardGroup := apiGroup.Group("/leaderboard")
 

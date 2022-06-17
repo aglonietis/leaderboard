@@ -12,9 +12,8 @@ import (
 	"time"
 )
 
-type authController struct{
+type authController struct {
 	userRepository repositories.UserRepository
-
 }
 
 type AuthController interface {
@@ -37,13 +36,13 @@ func (c *authController) Login(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	user,err := c.userRepository.FindByName(request.Username)
+	user, err := c.userRepository.FindByName(request.Username)
 
 	if err != nil {
 		return ctx.JSON(http.StatusNotFound, "")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password));
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
 
 	if err != nil {
 		return ctx.JSON(http.StatusNotFound, "")

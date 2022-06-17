@@ -26,7 +26,7 @@ func (r *leaderboardRepository) Index(page int, rankingType string) ([]models.Ra
 
 	baseQuery := db.Order("rank asc").
 		Joins("JOIN "+rankingTable+" on player_score_id=player_scores.id").
-		Select("rank","player_scores.name","player_scores.score").
+		Select("rank", "player_scores.name", "player_scores.score").
 		Table("player_scores")
 
 	pagination, err := database.Paginate(baseQuery, &scores, page)
@@ -57,18 +57,16 @@ func (r *leaderboardRepository) GetAroundPlayer(name string, rankingType string)
 		Table("player_scores")
 
 	err := db.Order("rank asc").
-		Where("rank > (?)",playerRankingSubqueryMin).
-		Where("rank < (?)",playerRankingSubqueryMax).
+		Where("rank > (?)", playerRankingSubqueryMin).
+		Where("rank < (?)", playerRankingSubqueryMax).
 		Joins("JOIN player_scores on player_score_id=player_scores.id").
 		Table(rankingTable).
-		Select("player_scores.name","player_scores.score","rank").
+		Select("player_scores.name", "player_scores.score", "rank").
 		Find(&scores).Error
 
 	if err != nil {
 		return scores, err
 	}
-
-
 
 	return scores, nil
 }
