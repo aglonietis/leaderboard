@@ -6,7 +6,15 @@ import (
 )
 
 func QueryParamInt(ctx echo.Context, name string, defaultValue int) (int, error) {
-	page, err := strconv.Atoi(ctx.QueryParam(name))
+	var page int = defaultValue
+
+	pageValue := ctx.QueryParam(name)
+
+	if pageValue == "" {
+		return page, nil
+	}
+
+	page, err := strconv.Atoi(pageValue)
 
 	if err != nil {
 		page = defaultValue

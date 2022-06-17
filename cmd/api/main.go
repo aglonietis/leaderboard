@@ -47,7 +47,7 @@ func main() {
 
 	publicGroup := apiGroup.Group("/")
 
-	publicGroup.GET("", homeController.Index)
+	e.GET("", homeController.Home)
 	publicGroup.POST("login", authController.Login)
 
 

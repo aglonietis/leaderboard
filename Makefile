@@ -12,16 +12,16 @@ seed:
 
 # Sets the environment up for development or testing
 setup:
+	go mod download
 	cp .env.example .env
-	docker compose up -d;
+	docker compose down -v;
+	docker compose up -d
+
+# Runs database relating actions and starts the server
+setup_server:
 	make migrate
 	make seed
 	make run
-
-# Refreshes the environment
-refresh:
-	docker compose down -v;
-	make setup
 
 # Builds migrations executable
 build_migrations:

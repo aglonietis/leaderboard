@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"github.com/labstack/echo/v4"
 	"leaderboard/internal/handler"
 	"leaderboard/internal/models"
@@ -35,7 +36,11 @@ func (c *leaderboardController) Index(ctx echo.Context) error {
 	}
 
 	// Can pass monthly to get mothly list
-	rankingType := ctx.Param("type")
+	rankingType, err := getRankingType(ctx)
+
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, err.Error())
+	}
 
 	scores, pagination, err := c.leaderboardRepository.Index(page,rankingType)
 
@@ -76,4 +81,14 @@ func containsPlayerName(elements []models.Ranking, name string) bool {
 	}
 
 	return false
+}
+
+func getRankingType(ctx echo.Context) (string, error) {
+	rankingType := ctx.Param("type")
+
+	if rankingType != "monthly" && rankingType != "" {
+		return rankingType, errors.New("Ranking Type has invalid value. Allowed values: monthly")
+	}
+
+	return rankingType, nil
 }

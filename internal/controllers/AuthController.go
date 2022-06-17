@@ -37,7 +37,6 @@ func (c *authController) Login(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, err.Error())
 	}
 
-
 	user,err := c.userRepository.FindByName(request.Username)
 
 	if err != nil {
