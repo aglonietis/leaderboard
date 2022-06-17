@@ -54,5 +54,5 @@ func (p *Pagination) GetPage() int {
 }
 
 func GetAroundPlayerRange() int {
-	return int(viper.GetFloat64("LEADERBOARD_PAGE_SIZE")/float64(2))
+	return int(viper.GetFloat64("LEADERBOARD_PAGE_SIZE") / float64(2))
 }

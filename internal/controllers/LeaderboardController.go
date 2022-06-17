@@ -13,7 +13,7 @@ import (
 
 type leaderboardController struct {
 	leaderboardRepository repositories.LeaderboardRepository
-	scoreRepository repositories.ScoreRepository
+	scoreRepository       repositories.ScoreRepository
 }
 
 type LeaderboardController interface {
@@ -23,13 +23,13 @@ type LeaderboardController interface {
 func NewLeaderboardController() LeaderboardController {
 	return &leaderboardController{
 		leaderboardRepository: repositories.NewLeaderboardRepository(),
-		scoreRepository: repositories.NewScoreRepository(),
+		scoreRepository:       repositories.NewScoreRepository(),
 	}
 }
 
 func (c *leaderboardController) Index(ctx echo.Context) error {
 
-	page,err := handler.QueryParamInt(ctx, "page", 1)
+	page, err := handler.QueryParamInt(ctx, "page", 1)
 
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, "Query parameter \"Page\" contains an invalid value!")
@@ -42,7 +42,7 @@ func (c *leaderboardController) Index(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	scores, pagination, err := c.leaderboardRepository.Index(page,rankingType)
+	scores, pagination, err := c.leaderboardRepository.Index(page, rankingType)
 
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to retrieve Player Score List")
@@ -54,7 +54,7 @@ func (c *leaderboardController) Index(ctx echo.Context) error {
 
 	if playerName != "" && false == containsPlayerName(scores, playerName) {
 
-		aroundMe, err = c.leaderboardRepository.GetAroundPlayer(playerName,rankingType)
+		aroundMe, err = c.leaderboardRepository.GetAroundPlayer(playerName, rankingType)
 
 		if err != nil {
 			return ctx.JSON(http.StatusInternalServerError, "Failed to retrieve Player Score List around player")

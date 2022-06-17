@@ -47,7 +47,7 @@ func main() {
 func MigrateModels() error {
 	db := database.DbManager()
 
-	err := db.AutoMigrate(&models.PlayerScore{},&models.User{},&models.JwtToken{})
+	err := db.AutoMigrate(&models.PlayerScore{}, &models.User{}, &models.JwtToken{})
 
 	if err != nil {
 		return err
@@ -79,8 +79,8 @@ func MigrateRaw() error {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-"file://database/migrations",
-		database.GetDatabaseName(),driver,
+		"file://database/migrations",
+		database.GetDatabaseName(), driver,
 	)
 
 	if err != nil {
@@ -93,7 +93,7 @@ func MigrateRaw() error {
 	m.Down()
 
 	if dirty {
-		err := m.Force(int(step-1))
+		err := m.Force(int(step - 1))
 
 		if err != nil {
 			return err
