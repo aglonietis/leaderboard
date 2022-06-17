@@ -37,6 +37,6 @@ build_api:
 
 # Starts the API server
 run:
-	./bin/api
+	./main
 
 
