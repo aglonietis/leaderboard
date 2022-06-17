@@ -8,22 +8,24 @@ import (
 type leaderboardRepository struct{}
 
 type LeaderboardRepository interface {
-	Index(page int) ([]models.Ranking, database.Pagination, error)
-	GetAroundPlayer(name string) ([]models.Ranking, error)
+	Index(page int, rankingType string) ([]models.Ranking, database.Pagination, error)
+	GetAroundPlayer(name string, rankingType string) ([]models.Ranking, error)
 }
 
 func NewLeaderboardRepository() LeaderboardRepository {
 	return &leaderboardRepository{}
 }
 
-func (r *leaderboardRepository) Index(page int) ([]models.Ranking, database.Pagination, error) {
+func (r *leaderboardRepository) Index(page int, rankingType string) ([]models.Ranking, database.Pagination, error) {
 	var scores []models.Ranking
 
 	db := database.DbManager()
 
-	baseQuery := db.Order("rankings.rank asc").
-		Joins("JOIN rankings on rankings.player_score_id=player_scores.id").
-		Select("rankings.rank","player_scores.name","player_scores.score").
+	rankingTable := getRankingTable(rankingType)
+
+	baseQuery := db.Order("rank asc").
+		Joins("JOIN "+rankingTable+" on player_score_id=player_scores.id").
+		Select("rank","player_scores.name","player_scores.score").
 		Table("player_scores")
 
 	pagination, err := database.Paginate(baseQuery, &scores, page)
@@ -35,27 +37,29 @@ func (r *leaderboardRepository) Index(page int) ([]models.Ranking, database.Pagi
 	return scores, pagination, nil
 }
 
-func (r *leaderboardRepository) GetAroundPlayer(name string) ([]models.Ranking, error) {
+func (r *leaderboardRepository) GetAroundPlayer(name string, rankingType string) ([]models.Ranking, error) {
 	var scores []models.Ranking
 
 	db := database.DbManager()
 
+	rankingTable := getRankingTable(rankingType)
+
 	playerRankingSubqueryMin := db.Select("(player_ranking.rank - 5)").
-		Joins("JOIN rankings as player_ranking on player_ranking.player_score_id=player_scores.id").
+		Joins("JOIN "+rankingTable+" as player_ranking on player_ranking.player_score_id=player_scores.id").
 		Where("name = ?", name).
 		Table("player_scores")
 
 	playerRankingSubqueryMax := db.Select("(player_ranking.rank + 5)").
-		Joins("JOIN rankings as player_ranking on player_ranking.player_score_id=player_scores.id").
+		Joins("JOIN "+rankingTable+" as player_ranking on player_ranking.player_score_id=player_scores.id").
 		Where("name = ?", name).
 		Table("player_scores")
 
-	err := db.Order("rankings.rank asc").
-		Where("rankings.rank > (?)",playerRankingSubqueryMin).
-		Where("rankings.rank < (?)",playerRankingSubqueryMax).
-		Joins("JOIN player_scores on rankings.player_score_id=player_scores.id").
-		Table("rankings").
-		Select("player_scores.name","player_scores.score","rankings.rank").
+	err := db.Order("rank asc").
+		Where("rank > (?)",playerRankingSubqueryMin).
+		Where("rank < (?)",playerRankingSubqueryMax).
+		Joins("JOIN player_scores on player_score_id=player_scores.id").
+		Table(rankingTable).
+		Select("player_scores.name","player_scores.score","rank").
 		Find(&scores).Error
 
 	if err != nil {
@@ -65,4 +69,12 @@ func (r *leaderboardRepository) GetAroundPlayer(name string) ([]models.Ranking, 
 
 
 	return scores, nil
+}
+
+func getRankingTable(rankingType string) string {
+	if rankingType == "monthly" {
+		return "rankings_monthly"
+	}
+
+	return "rankings"
 }

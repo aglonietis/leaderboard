@@ -62,6 +62,7 @@ func main() {
 	// API routes
 	scoreGroup.POST("", scoreController.Store)
 	leaderboardGroup.GET("", leaderboardController.Index)
+	leaderboardGroup.GET("/:type", leaderboardController.Index)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
