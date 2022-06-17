@@ -33,7 +33,7 @@ build_seeds:
 
 # Builds API server executable
 build_api:
-	go build -o bin/api cmd/api/main.go
+	go build -o main cmd/api/main.go
 
 # Starts the API server
 run:

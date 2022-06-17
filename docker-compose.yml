@@ -16,6 +16,15 @@ services:
     networks:
       - web_api
 
+  api:
+    build: .
+    container_name: api_server
+    ports:
+      - "${API_PORT}:8080"
+    restart: always
+    networks:
+      - web_api
+
 volumes:
   postgresql_data:
 
