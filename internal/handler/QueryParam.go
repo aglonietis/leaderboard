@@ -5,12 +5,12 @@ import (
 	"strconv"
 )
 
-func QueryParamInt(ctx echo.Context, name string, defaultValue int) int {
+func QueryParamInt(ctx echo.Context, name string, defaultValue int) (int, error) {
 	page, err := strconv.Atoi(ctx.QueryParam(name))
 
 	if err != nil {
 		page = defaultValue
 	}
 
-	return page
+	return page, err
 }

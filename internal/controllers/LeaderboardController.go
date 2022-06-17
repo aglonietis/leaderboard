@@ -28,9 +28,16 @@ func NewLeaderboardController() LeaderboardController {
 
 func (c *leaderboardController) Index(ctx echo.Context) error {
 
-	page := handler.QueryParamInt(ctx, "page", 1)
+	page,err := handler.QueryParamInt(ctx, "page", 1)
 
-	scores, pagination, err := c.leaderboardRepository.Index(page)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, "Query parameter \"Page\" contains an invalid value!")
+	}
+
+	// Can pass monthly to get mothly list
+	rankingType := ctx.Param("type")
+
+	scores, pagination, err := c.leaderboardRepository.Index(page,rankingType)
 
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to retrieve Player Score List")
@@ -42,7 +49,7 @@ func (c *leaderboardController) Index(ctx echo.Context) error {
 
 	if playerName != "" && false == containsPlayerName(scores, playerName) {
 
-		aroundMe, err = c.leaderboardRepository.GetAroundPlayer(playerName)
+		aroundMe, err = c.leaderboardRepository.GetAroundPlayer(playerName,rankingType)
 
 		if err != nil {
 			return ctx.JSON(http.StatusInternalServerError, "Failed to retrieve Player Score List around player")
