@@ -3,6 +3,7 @@ package repositories
 import (
 	"leaderboard/internal/database"
 	"leaderboard/internal/models"
+	"strconv"
 )
 
 type leaderboardRepository struct{}
@@ -43,13 +44,14 @@ func (r *leaderboardRepository) GetAroundPlayer(name string, rankingType string)
 	db := database.DbManager()
 
 	rankingTable := getRankingTable(rankingType)
+	aroundPlayerRange := getAroundPlayerRange()
 
-	playerRankingSubqueryMin := db.Select("(player_ranking.rank - 5)").
+	playerRankingSubqueryMin := db.Select("(player_ranking.rank - "+aroundPlayerRange+")").
 		Joins("JOIN "+rankingTable+" as player_ranking on player_ranking.player_score_id=player_scores.id").
 		Where("name = ?", name).
 		Table("player_scores")
 
-	playerRankingSubqueryMax := db.Select("(player_ranking.rank + 5)").
+	playerRankingSubqueryMax := db.Select("(player_ranking.rank + "+aroundPlayerRange+")").
 		Joins("JOIN "+rankingTable+" as player_ranking on player_ranking.player_score_id=player_scores.id").
 		Where("name = ?", name).
 		Table("player_scores")
@@ -77,4 +79,10 @@ func getRankingTable(rankingType string) string {
 	}
 
 	return "rankings"
+}
+
+func getAroundPlayerRange() string {
+	aroundRange := database.GetAroundPlayerRange()
+
+	return strconv.Itoa(aroundRange)
 }
