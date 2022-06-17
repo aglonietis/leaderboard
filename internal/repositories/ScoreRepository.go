@@ -35,11 +35,11 @@ func (r *scoreRepository) Create(name string) models.PlayerScore {
 }
 
 func (r *scoreRepository) FindByName(name string) (models.PlayerScore, error) {
-	var existingScore models.PlayerScore
+	var score models.PlayerScore
 
 	db := database.DbManager()
 
-	err := db.Where("name = ?", name).First(&existingScore).Error
+	err := db.Where("name = ?", name).First(&score).Error
 
-	return existingScore, err
+	return score, err
 }

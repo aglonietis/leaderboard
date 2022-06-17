@@ -16,5 +16,5 @@ func NewHomeController() HomeController {
 }
 
 func (c *homeController) Index(ctx echo.Context) error {
-	return ctx.String(http.StatusOK, "Hello, World!")
+	return ctx.String(http.StatusOK, "Leaderboard")
 }
